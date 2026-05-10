@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.llmdp.cisapi.mapper.CisSpecMapper">
+
+    <resultMap id="CisSpecResultMap" type="com.llmdp.cisapi.dto.CisSpecResponse">
+        <id     property="specId"    column="spec_id"/>
+        <result property="specCode"  column="spec_code"/>
+        <result property="specName"  column="spec_name"/>
+        <result property="specValue" column="spec_value"/>
+        <result property="specType"  column="spec_type"/>
+        <result property="useYn"     column="use_yn"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <select id="selectCisSpecList" parameterType="com.llmdp.cisapi.dto.CisSpecRequest"
+            resultMap="CisSpecResultMap">
+        SELECT
+            spec_id,
+            spec_code,
+            spec_name,
+            spec_value,
+            spec_type,
+            use_yn,
+            TO_CHAR(created_at, 'YYYY-MM-DD HH24:MI:SS') AS created_at,
+            TO_CHAR(updated_at, 'YYYY-MM-DD HH24:MI:SS') AS updated_at
+        FROM
+            ifr_cis_spec
+        <where>
+            <if test="specCode != null and specCode != ''">
+                AND spec_code = #{specCode}
+            </if>
+            <if test="specName != null and specName != ''">
+                AND spec_name LIKE '%' || #{specName} || '%'
+            </if>
+            <if test="specType != null and specType != ''">
+                AND spec_type = #{specType}
+            </if>
+            <if test="useYn != null and useYn != ''">
+                AND use_yn = #{useYn}
+            </if>
+        </where>
+        ORDER BY spec_id
+    </select>
+
+</mapper>
